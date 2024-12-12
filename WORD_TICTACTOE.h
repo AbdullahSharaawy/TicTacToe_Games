@@ -184,14 +184,38 @@ WORD_TICTACTOE_Player<T>::WORD_TICTACTOE_Player(string name, T symbol) : Player<
 template <typename T>
 void WORD_TICTACTOE_Player<T>::getmove(int& x, int& y) {
     char letter;
-    cout << "Please enter your letter: ";
-    cin >> letter;  // 'letter' is local to this function, not 'symbol'
+    // Validate the letter input
+    while (true) {
+        cout << "Please enter your letter: ";
+        cin >> letter;
 
+        // Check if the input is valid
+        if (cin.fail() || !isalpha(letter)) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Please enter a valid letter (a-z or A-Z).\n";
+        }
+        else {
+            break; // Exit loop if input is valid
+        }
+    }
     // Optionally assign the letter to the player's symbol
     this->symbol = static_cast<T>(letter);  // Explicit cast to T if needed
 
-    cout << "Please enter your move x and y (0 to 2) separated by spaces: ";
-    cin >> x >> y;
+    while (true) {
+        cout << "\nEnter your move x and y  separated by spaces: ";
+        cin >> x >> y;
+
+        // Check if input is valid
+        if (cin.fail()) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Please enter a valid integer.\n";
+        }
+        else {
+            break; // Exit the loop if input is valid
+        }
+    }
 }
 
 // Constructor for X_O_Random_Player
