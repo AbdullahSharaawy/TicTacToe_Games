@@ -1,5 +1,5 @@
 #include <iostream>
-#include "TicTacToe_5x5.h"
+#include "FiveXFiveTicTacToe.h"
 #include "BoardGame_Classes.h"
 
 using namespace std;
