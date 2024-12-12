@@ -209,9 +209,21 @@ four_in_a_row_Player<T>::four_in_a_row_Player(string name, T symbol) : Player<T>
 
 template <typename T>
 void four_in_a_row_Player<T>::getmove(int& x, int& y) {
-    cout << "\nPlease enter number of column (0 -> 6): ";
-    cin >> y;
+    while (true) {
+        cout << "\nEnter number of column (0 -> 6): ";
+        cin >> y;
 
+        // Check if input is valid
+        if (cin.fail()) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Please enter a valid integer.\n";
+        }
+        else {
+            break; // Exit the loop if input is valid
+        }
+    }
+    
     
 }
 
