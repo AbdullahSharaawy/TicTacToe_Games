@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "TicTacToe_3x3.h"
+#include "MisereTicTacToe.h"
 #include "BoardGame_Classes.h"
 
 using namespace std;
@@ -21,9 +21,9 @@ int main() {
         cout << "Enter name for Player 1: ";
         cin >> player1_name;
 
-        TicTacToe_Board<char>* board = new TicTacToe_Board<char>();
-        TicTacToe_Player<char>* player1 = new TicTacToe_Player<char>(player1_name, 'X');
-        TicTacToe_Random_Player<char>* player2 = new TicTacToe_Random_Player<char>('O');
+        MisereTicTacToe_Board<char>* board = new MisereTicTacToe_Board<char>();
+        MisereTicTacToe_Player<char>* player1 = new MisereTicTacToe_Player<char>(player1_name, 'X');
+        MisereTicTacToe_Random_Player<char>* player2 = new MisereTicTacToe_Random_Player<char>('O');
 
         board->set_players(player1, player2);
         name[0] = player1;
@@ -39,9 +39,9 @@ int main() {
         cout << "Enter name for Player 2: ";
         cin >> player2_name;
 
-        TicTacToe_Board<char>* board = new TicTacToe_Board<char>();
-        TicTacToe_Player<char>* player1 = new TicTacToe_Player<char>(player1_name, 'X');
-        TicTacToe_Player<char>* player2 = new TicTacToe_Player<char>(player2_name, 'O');
+        MisereTicTacToe_Board<char>* board = new MisereTicTacToe_Board<char>();
+        MisereTicTacToe_Player<char>* player1 = new MisereTicTacToe_Player<char>(player1_name, 'X');
+        MisereTicTacToe_Player<char>* player2 = new MisereTicTacToe_Player<char>(player2_name, 'O');
 
         board->set_players(player1, player2);
         name[0] = player1;
