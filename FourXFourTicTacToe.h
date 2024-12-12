@@ -207,7 +207,7 @@ bool FourXFourTicTacToe_Player<T>::isCellEmpty(int x, int y)
     
         // Assume Board<T> provides `getCell` or equivalent
         if (this->boardPtr) {
-            return this->boardPtr->update_board(x, y, '\0'); // Try updating with an empty value
+            return this->boardPtr->update_board(x, y, '\0'); // check if the cell is empty or not
         }
         return false;
 }
@@ -230,7 +230,12 @@ void FourXFourTicTacToe_Player<T>::getmove(int& x, int& y) {
     vector <string>list;
     do {
         cout << "\nPlease enter a position for your token x and y separated by spaces, where this token you can move it  to an empty place next to it: ";
-        cin >> current_x >> current_y;
+       
+        while (!(cin >> current_x >> current_y)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter two integer values for x and y: ";
+        }
 
     } while (!generatePositionsList(current_x, current_y, list) );
     do
@@ -239,7 +244,11 @@ void FourXFourTicTacToe_Player<T>::getmove(int& x, int& y) {
         for (string position : list)
             cout << "( " << position << " ), ";
         cout << endl;
-        cin >> x >> y;
+        while (!(cin >> x >> y)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter two integer values for x and y: ";
+        }
     } while (!IsValidMove(x, y, list));
     checkOnly = false;//turn off
     deleteSymbol = true;//turn on
