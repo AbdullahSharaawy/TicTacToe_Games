@@ -4,6 +4,8 @@
 
 using namespace std;
 
+string player1_name;
+string player2_name;
 int main() {
     int choice;
 
@@ -18,11 +20,9 @@ int main() {
     switch (choice) {
 
     case 1: {
-        string player1_name;
         cout << "Enter name for Player 1: ";
         cin >> player1_name;
         
-        playerName_X = player1_name;
         FiveXFiveTicTacToe_Board<char>* board = new FiveXFiveTicTacToe_Board<char>();
         FiveXFiveTicTacToe_Player<char>* player1 = new FiveXFiveTicTacToe_Player<char>(player1_name, 'X');
         FiveXFiveTicTacToe_Random_Player<char>* player2 = new FiveXFiveTicTacToe_Random_Player<char>('O');
@@ -35,21 +35,18 @@ int main() {
         GameManager<char> gameManager(board, player);
         gameManager.run();
 
-        delete player1;
-        delete player2;
-        delete board;
+        
 
         break;
     }
 
     case 2: {
-        string player1_name, player2_name;
+        
         cout << "Enter name for Player 1: ";
         cin >> player1_name;
         cout << endl;
         cout << "Enter name for Player 2: ";
         cin >> player2_name;
-        playerName_X = player1_name;
         FiveXFiveTicTacToe_Board<char>* board = new FiveXFiveTicTacToe_Board<char>();
         FiveXFiveTicTacToe_Player<char>* player1 = new FiveXFiveTicTacToe_Player<char>(player1_name, 'X');
         FiveXFiveTicTacToe_Player<char>* player2 = new FiveXFiveTicTacToe_Player<char>(player2_name, 'O');
@@ -62,9 +59,7 @@ int main() {
         GameManager<char> gameManager(board, player);
         gameManager.run();
 
-        delete player1;
-        delete player2;
-        delete board;
+        
 
         break;
     }
