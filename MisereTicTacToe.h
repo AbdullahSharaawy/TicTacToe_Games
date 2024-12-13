@@ -11,7 +11,9 @@
 
 using namespace std;
 
-extern Player<char>* name[2];
+
+extern string player1_name;
+extern string player2_name;
 
 template <typename T>
 class MisereTicTacToe_Board : public Board<T> {
@@ -21,12 +23,15 @@ public:
     void display_board() override;
     bool is_win() override;
     bool is_draw() override;
+    int x_count();
+    int o_count();
+    void swap_player_names();
     bool game_is_over() override;
-    void swap_players();
     void set_players(Player<T>* player1, Player<T>* player2) {
         this->players[0] = player1;
         this->players[1] = player2;
     }
+    
 private:
     T board[3][3];
     int n_moves;
@@ -39,13 +44,24 @@ class MisereTicTacToe_Player : public Player<T> {
 public:
     MisereTicTacToe_Player(string name, T symbol) : Player<T>(name, symbol) {}
     void getmove(int& x, int& y) override;
+    MisereTicTacToe_Player<T>& operator=(const MisereTicTacToe_Player<T>& other);
 };
+
+template <typename T>
+MisereTicTacToe_Player<T>& MisereTicTacToe_Player<T>::operator=(const MisereTicTacToe_Player<T>& other) {
+    if (this != &other) {
+        this->name = other.name;
+        this->symbol = other.symbol;
+    }
+    return *this;
+}
 
 template <typename T>
 class MisereTicTacToe_Random_Player : public Player<T> {
 public:
     MisereTicTacToe_Random_Player(T symbol) : Player<T>("Computer", symbol) { srand(static_cast<unsigned int>(time(0))); }
     void getmove(int& x, int& y) override;
+
 };
 
 template <typename T>
@@ -57,6 +73,8 @@ MisereTicTacToe_Board<T>::MisereTicTacToe_Board() {
             this->board[i][j] = 0;
         }
     }
+    this->players[0] = nullptr;
+    this->players[1] = nullptr;
 }
 
 template <typename T>
@@ -82,25 +100,108 @@ void MisereTicTacToe_Board<T>::display_board() {
     cout << endl;
 }
 
+
+
 template <typename T>
-bool MisereTicTacToe_Board<T>::is_win() {
+int MisereTicTacToe_Board<T>::x_count() {
+    int count = 0;
 
     for (int i = 0; i < 3; i++) {
-        if (this->board[i][0] == this->board[i][1] && this->board[i][1] == this->board[i][2] && this->board[i][0] != 0)
-            return true;
-            
-        if (this->board[0][i] == this->board[1][i] && this->board[1][i] == this->board[2][i] && this->board[0][i] != 0)
-            return true;
+        if (this->board[i][0] == this->board[i][1] &&
+            this->board[i][1] == this->board[i][2] &&
+            this->board[i][0] == 'X') {
+            count++;
+            return count; 
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (this->board[0][i] == this->board[1][i] &&
+                this->board[1][i] == this->board[2][i] &&
+                this->board[0][i] == 'X') {
+                count++;
+                return count;  
+            }
+        }
     }
-    
-    if (this->board[0][0] == this->board[1][1] && this->board[1][1] == this->board[2][2] && this->board[0][0] != 0)
-        return true;
-        
-    if (this->board[0][2] == this->board[1][1] && this->board[1][1] == this->board[2][0] && this->board[0][2] != 0)
-        return true;
+    if (this->board[0][0] == this->board[1][1] &&
+        this->board[1][1] == this->board[2][2] &&
+        this->board[0][0] == 'X') {
+        count++;
+        return count;  
+    }
+
+    if (this->board[0][2] == this->board[1][1] &&
+        this->board[1][1] == this->board[2][0] &&
+        this->board[0][2] == 'X') {
+        count++;
+        return count;  
+    }
+
+    return count;
+}
+
+template <typename T>
+int MisereTicTacToe_Board<T>::o_count() {
+    int count = 0;
+
+    for (int i = 0; i < 3; i++) {
+        if (this->board[i][0] == this->board[i][1] &&
+            this->board[i][1] == this->board[i][2] &&
+            this->board[i][0] == 'O') {
+            count++;
+            return count; 
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (this->board[0][i] == this->board[1][i] &&
+                this->board[1][i] == this->board[2][i] &&
+                this->board[0][i] == 'O') {
+                count++;
+                return count;  
+            }
+        }
+    }
+    if (this->board[0][0] == this->board[1][1] &&
+        this->board[1][1] == this->board[2][2] &&
+        this->board[0][0] == 'O') {
+        count++;
+        return count;  
+    }
+
+    if (this->board[0][2] == this->board[1][1] &&
+        this->board[1][1] == this->board[2][0] &&
+        this->board[0][2] == 'O') {
+        count++;
+        return count; 
+    }
+
+    return count;
+}
+
+template <typename T>
+void MisereTicTacToe_Board<T>::swap_player_names() {
+    string temp = player1_name;
+    player1_name = player2_name;
+    player2_name = temp;
+}
+
+template <typename T>
+bool MisereTicTacToe_Board<T>::is_win() {
+    int x = x_count();
+    int o = o_count();
+
+    if (x > o) {
+        cout << player2_name << " wins!\n";
+        exit(0);
+    }
+    else if (o > x) {
+        cout << player1_name << " wins!\n";
+        exit(0);
+    }
 
     return false;
 }
+
 
 template <typename T>
 bool MisereTicTacToe_Board<T>::is_draw() {
@@ -110,11 +211,9 @@ bool MisereTicTacToe_Board<T>::is_draw() {
 template <typename T>
 bool MisereTicTacToe_Board<T>::game_is_over() {
     if (is_win()) {
-        cout << "\n" << players[current_player]->getname() << " loses the game!\n";
         return true;
     }
     if (is_draw()) {
-        cout << "\nThe game is a draw!\n";
         return true;
     }
     return false;
@@ -131,11 +230,9 @@ void MisereTicTacToe_Player<T>::getmove(int& x, int& y) {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. row and column values between 0 and 4.\n";
         }
-
         else if (x >= 0 && x < 3 && y >= 0 && y < 3) {
             validMove = true;
         }
-
         else {
             cout << "Invalid input. row and column values between 0 and 4.\n";
         }
