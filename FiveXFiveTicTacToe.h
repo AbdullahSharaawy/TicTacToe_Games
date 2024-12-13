@@ -1,16 +1,17 @@
 #ifndef _FiveXFiveTicTacToe_H
 #define _FiveXFiveTicTacToe_H
+#pragma once
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <utility>
 #include <cctype>
 #include "BoardGame_Classes.h"
 #include <limits>
 using namespace std;
-static Player<char>* player[2];
-int x, o;
+string playerName_X;
 
+int x, o;
+bool player_x=false;
 template <typename T>
 class FiveXFiveTicTacToe_Board : public Board<T> {
 public:
@@ -39,17 +40,28 @@ private:
 template <typename T>
 class FiveXFiveTicTacToe_Player : public Player<T> {
 public:
-
     FiveXFiveTicTacToe_Player(string name, T symbol) : Player<T>(name, symbol) {}
+
     void getmove(int& x, int& y) override;
+
+   FiveXFiveTicTacToe_Player<T>& operator=(const FiveXFiveTicTacToe_Player<T>& other);
 };
 
 template <typename T>
-class FiveXFiveTicTacToe_Random_Player : public Player<T> {
+FiveXFiveTicTacToe_Player<T>& FiveXFiveTicTacToe_Player<T>::operator=(const FiveXFiveTicTacToe_Player<T>& other) {
+    if (this != &other) {  // Avoid self-assignment
+        this->name = other.name;
+        this->symbol = other.symbol;
+    }
+    return *this;
+}
+template <typename T>
+class FiveXFiveTicTacToe_Random_Player : public RandomPlayer<T> {
 public:
-    FiveXFiveTicTacToe_Random_Player(T symbol) : Player<T>("Computer", symbol) {
+    FiveXFiveTicTacToe_Random_Player(T symbol) : RandomPlayer<T>( symbol) {
         srand(static_cast<unsigned int>(time(0)));
     }
+
 
     void getmove(int& x, int& y) override;
 
@@ -90,6 +102,7 @@ void FiveXFiveTicTacToe_Board<T>::display_board() {
     }
     cout << endl;
 }
+
 
 template <typename T>
 int FiveXFiveTicTacToe_Board<T>::x_count() {
@@ -215,17 +228,22 @@ template <typename T>
 bool FiveXFiveTicTacToe_Board<T>::is_win() {
     x = x_count();
     o = o_count();
+    // in this condition function will return false to ignore display name of player O as a winner , where i print name player x with out pointer of players that exist in game manager
     if (x > o) {
+
+        if (player_x)
+            return false;
+       
         cout << "score player x= " << x << endl
             << "score player o= " << o << endl;
-         if (player[0]->getsymbol() == 'X') {
-            swap(player[0], player[1]);
-         }
-        return true;
+        cout << playerName_X<<" wins" << endl;
+        player_x = true;
+        return false;
     }
     else if (o > x) {
         cout << "score player x= " << x << endl
             << "score player o= " << o << endl;
+        
         return true;
     }
     else {
@@ -235,7 +253,9 @@ bool FiveXFiveTicTacToe_Board<T>::is_win() {
 
 template <typename T>
 bool FiveXFiveTicTacToe_Board<T>::is_draw() {
-    if (this->n_moves == 24 && !is_win()) {
+if (player_x)
+        return false;
+else if (this->n_moves == 24 && !is_win()) {
         cout << "score player x= " << x << endl
             << "score player o= " << o << endl;
     }
@@ -244,7 +264,7 @@ bool FiveXFiveTicTacToe_Board<T>::is_draw() {
 
 template <typename T>
 bool FiveXFiveTicTacToe_Board<T>::game_is_over() {
-    return is_win() || is_draw();
+    return is_win() || is_draw() || player_x;
 }
 
 template <typename T>
@@ -258,11 +278,9 @@ void FiveXFiveTicTacToe_Player<T>::getmove(int& x, int& y) {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. row and column values between 0 and 4.\n";
         }
-
         else if (x >= 0 && x < 5 && y >= 0 && y < 5) {
             validMove = true;
         }
-
         else {
             cout << "Invalid input. row and column values between 0 and 4.\n";
         }
