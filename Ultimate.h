@@ -1,5 +1,6 @@
-#pragma once
-#include "BoardGame_Classes.h"
+#ifndef ULTIMATE_H
+#define ULTIMATE_H
+
 #include "TicTacToe_of_Ultimate.h"
 
 
@@ -13,6 +14,9 @@ public:
     bool You_win();
     bool You_draw();
 };
+
+//====================================================
+//implementation
 
 Ultimategame::Ultimategame(){
 	for (int i = 0; i < 3; i++) 
@@ -39,7 +43,7 @@ bool Ultimategame::You_win(){
     
 }
 
-inline bool Ultimategame::You_draw(){
+bool Ultimategame::You_draw(){
     
         if (Big_moves == 9) return true;
     
@@ -85,9 +89,9 @@ void Ultimategame::Run_gaMe() {
         return;
     }
 
-    cout << "Enter Player Y name: ";
+    cout << "Enter Player O name: ";
     cin >> player2Name;
-    cout << "Choose Player Y type:\n";
+    cout << "Choose Player O type:\n";
     cout << "1. Human\n";
     cout << "2. Random Computer\n";
     cin >> choice;
@@ -105,7 +109,8 @@ void Ultimategame::Run_gaMe() {
     }
 
     while (true) {
-        int row, colomn, winersymbol;
+        int row, column, winersymbol;
+  
         for (int i : {0, 1}) {
             display_BigBoard();
 
@@ -113,7 +118,10 @@ void Ultimategame::Run_gaMe() {
                 cout << "enter your move\n";
                 cout << "choose a place in the Ultimate Board to play";
             }
-            players[i]->getmove(row, colomn);
+            players[i]->getmove(row, column);
+            if (players[i]->getname() == "Random Computer Player") {
+                cout << "computer chose spot: " << row << " " << column << endl;
+            }
 
             GameManager<char> game(B, players);
             cout << "player with symbol 'X' playes always first\n";
@@ -121,12 +129,18 @@ void Ultimategame::Run_gaMe() {
             Big_moves++;
             winersymbol = B->get_winer_Symbol();
             if (B->is_win()) {
-                cout << "you get this one player " << players[i]->getname() << endl;
-                BigBoard[row][colomn] = winersymbol;
+                if (winersymbol == 'X') {
+                    cout << "you get this one player " << players[0]->getname() << endl;
+                    BigBoard[row][column] = winersymbol;
+                }
+                else {
+                    cout << "you get this one player " << players[1]->getname() << endl;
+                    BigBoard[row][column] = winersymbol;
+                }
             }
             if (B->is_draw()) {
-                cout << "it is a DRAW?!!!\n" << "well no one has this now";
-                BigBoard[row][colomn] = 'D';
+                cout << "it is a DRAW?!!!\n" << "well, no one gets this now";
+                BigBoard[row][column] = 'D';
             }
 
             if (You_win()) {
@@ -151,3 +165,4 @@ void Ultimategame::Run_gaMe() {
 
 }
 
+#endif
