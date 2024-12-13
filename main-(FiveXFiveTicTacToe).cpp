@@ -1,5 +1,5 @@
 #include <iostream>
-#include "FiveXFiveTicTacToe.h"
+#include "TicTacToe_5x5.h"
 #include "BoardGame_Classes.h"
 
 using namespace std;
@@ -21,7 +21,8 @@ int main() {
         string player1_name;
         cout << "Enter name for Player 1: ";
         cin >> player1_name;
-
+        
+        playerName_X = player1_name;
         FiveXFiveTicTacToe_Board<char>* board = new FiveXFiveTicTacToe_Board<char>();
         FiveXFiveTicTacToe_Player<char>* player1 = new FiveXFiveTicTacToe_Player<char>(player1_name, 'X');
         FiveXFiveTicTacToe_Random_Player<char>* player2 = new FiveXFiveTicTacToe_Random_Player<char>('O');
@@ -48,7 +49,7 @@ int main() {
         cout << endl;
         cout << "Enter name for Player 2: ";
         cin >> player2_name;
-
+        playerName_X = player1_name;
         FiveXFiveTicTacToe_Board<char>* board = new FiveXFiveTicTacToe_Board<char>();
         FiveXFiveTicTacToe_Player<char>* player1 = new FiveXFiveTicTacToe_Player<char>(player1_name, 'X');
         FiveXFiveTicTacToe_Player<char>* player2 = new FiveXFiveTicTacToe_Player<char>(player2_name, 'O');
