@@ -146,7 +146,20 @@ TicTacToePlayer::TicTacToePlayer(string name, char symbol) : Player<char>(name, 
 
 void TicTacToePlayer::getmove(int& a, int& b) {
     cout << "\nPlease enter your move x and y (0 to 2) separated by spaces: ";
-    cin >> a >> b;
+    while (true) {
+        cin >> a >> b;
+
+        // Check if input is valid
+        if (cin.fail()) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Please enter a valid integer.\n";
+        }
+        else {
+            break; // Exit the loop if input is valid
+        }
+    }
+    
 }
 
 TicTacToeRandom_Player::TicTacToeRandom_Player(char symbol) : RandomPlayer<char>(symbol) {
