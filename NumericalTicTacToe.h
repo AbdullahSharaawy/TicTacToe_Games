@@ -7,156 +7,184 @@
 #include <cstdlib> 
 #include <ctime> 
 using namespace std;
-
-class NumericalTicTacToeBoard : public Board<int> {
+template <typename T>
+class NumericalTicTacToeBoard : public Board<T> {
 private:
     set<int> used_numbers;
 public:
     NumericalTicTacToeBoard();
     ~NumericalTicTacToeBoard();
-    bool update_board(int x, int y, int number) override;
-    void display_board() override;
-    bool is_win() override;
-    bool is_draw() override;
-    bool game_is_over() override;
+    bool update_board(int x, int y, int number);
+    void display_board();
+    bool is_win();
+    bool is_draw();
+    bool Is_empty(int x, int y);
+    bool game_is_over();
 };
 
-
-class NumericalTicTacToePlayer : public Player<int> {
+template <typename T>
+class NumericalTicTacToePlayer : public Player<T> {
 protected:
     set <int> available_numbers;
 public:
     NumericalTicTacToePlayer(string n, int symbol, bool odd);
-    void getmove(int& x, int& y) override;
+    void getmove(int& x, int& y) ;
 };  
 
-
-class RandomNumericalTicTacToePlayer : public NumericalTicTacToePlayer {
+template <typename T>
+class RandomNumericalTicTacToePlayer : public  RandomPlayer<T>{
+protected:
+    set <int> available_numbers;
 public:
-    RandomNumericalTicTacToePlayer(string n, int symbol, bool odd);
-    void getmove(int& x, int& y) override;
+    RandomNumericalTicTacToePlayer(int symbol, bool odd);
+    void getmove(int& x, int& y) ;
 };
 
 //==============================================================
 // implementation
-
-NumericalTicTacToeBoard::NumericalTicTacToeBoard() {
-    rows = columns = 3;
-    board = new int* [rows];
-    for (int i = 0; i < rows; ++i) {
-        board[i] = new int[columns];
-        for (int j = 0; j < columns; j++) {
-            board[i][j] = 0;
+template <typename T>
+NumericalTicTacToeBoard<T>::NumericalTicTacToeBoard() {
+    this->rows = this->columns = 3;
+    this->board = new int* [this->rows];
+    for (int i = 0; i < this->rows; ++i) {
+        this->board[i] = new int[this->columns];
+        for (int j = 0; j < this->columns; j++) {
+            this->board[i][j] = 0;
         }
     }
 }
-
-NumericalTicTacToeBoard::~NumericalTicTacToeBoard() {
-    for (int i = 0; i < rows; ++i) delete[] board[i];
-    delete[] board;
+template <typename T>
+NumericalTicTacToeBoard<T>::~NumericalTicTacToeBoard() {
+    for (int i = 0; i < this->rows; ++i) delete[] this->board[i];
+    delete[] this->board;
 }
-
-bool NumericalTicTacToeBoard::update_board(int x, int y, int number) {
-    if (x < 0 || x >= rows || y < 0 || y >= columns || board[x][y] != 0 || used_numbers.count(number)) {
-        cout << "invaled position. try again";
+template <typename T>
+bool NumericalTicTacToeBoard<T>::update_board(int x, int y, int number) {
+    if (x < 0 || x >= this->rows || y < 0 || y >= this->columns || this->board[x][y] != 0 || this->used_numbers.count(number)) {
         return false;
     }
-    board[x][y] = number;
-    used_numbers.insert(number);
-    n_moves++;
+    this->board[x][y] = number;
+    this->used_numbers.insert(number);
+    this->n_moves++;
     return true;
 }
-
-void NumericalTicTacToeBoard::display_board() {
+template <typename T>
+void NumericalTicTacToeBoard<T>::display_board() {
     cout << "\nBoard:\n";
     cout << "\t\t0\t\t1\t\t2\n\n";
-    for (int i = 0; i < rows; ++i) {
+    for (int i = 0; i < this->rows; ++i) {
         cout << "\t" << i;
-        for (int j = 0; j < columns; ++j) {
-            cout << "\t" << "(x, y) " << (board[i][j] == 0 ? "." : to_string(board[i][j])) << "  |" << " ";
+        for (int j = 0; j < this->columns; ++j) {
+            cout << "\t" << "(x, y) " << (this->board[i][j] == 0 ? "." : to_string(this->board[i][j])) << "  |" << " ";
         }
         cout << "\n\n";
     }
 }
-
-bool NumericalTicTacToeBoard::is_win() {
-    for (int i = 0; i < rows; ++i) {
-        if ((board[i][0] + board[i][1] + board[i][2] >= 15) &&
-            (((board[i][0] % 2 != 0) && (board[i][1] % 2 != 0) && (board[i][2] % 2 != 0))
-                || ((board[i][0] % 2 == 0) && (board[i][1] % 2 == 0) && (board[i][2] % 2 == 0))))
+template <typename T>
+bool NumericalTicTacToeBoard<T>::is_win() {
+    for (int i = 0; i < this->rows; ++i) {
+        if ((this->board[i][0] + this->board[i][1] + this->board[i][2] >= 15) &&
+            (((this->board[i][0] % 2 != 0) && (this->board[i][1] % 2 != 0) && (this->board[i][2] % 2 != 0))
+                || ((this->board[i][0] % 2 == 0) && (this->board[i][1] % 2 == 0) && (this->board[i][2] % 2 == 0))))
             return true;
     }
-    for (int j = 0; j < columns; ++j) {
-        if ((board[0][j] + board[1][j] + board[2][j] >= 15) &&
-            (((board[0][j] % 2 != 0) && (board[1][j] % 2 != 0) && (board[2][j] % 2 != 0))
-                || ((board[1][j] % 2 == 0) && (board[1][j] % 2 == 0) && (board[2][j] % 2 == 0))))
+    for (int j = 0; j < this->columns; ++j) {
+        if ((this->board[0][j] + this->board[1][j] + this->board[2][j] >= 15) &&
+            (((this->board[0][j] % 2 != 0) && (this->board[1][j] % 2 != 0) && (this->board[2][j] % 2 != 0))
+                || ((this->board[1][j] % 2 == 0) && (this->board[1][j] % 2 == 0) && (this->board[2][j] % 2 == 0))))
             return true;
     }
-    if ((board[0][0] + board[1][1] + board[2][2] >= 15) &&
-        (((board[0][0] % 2 != 0) && (board[1][1] % 2 != 0) && (board[2][2] % 2 != 0))
-            || ((board[0][0] % 2 == 0) && (board[1][1] % 2 == 0) && (board[2][2] % 2 == 0)))
-        || (board[0][2] + board[1][1] + board[2][0] >= 15) &&
-        (((board[0][2] % 2 != 0) && (board[1][1] % 2 != 0) && (board[2][0] % 2 != 0))
-            || ((board[0][2] % 2 == 0) && (board[1][1] % 2 == 0) && (board[2][0] % 2 == 0)))) {
+    if ((this->board[0][0] + this->board[1][1] + this->board[2][2] >= 15) &&
+        (((this->board[0][0] % 2 != 0) && (this->board[1][1] % 2 != 0) && (this->board[2][2] % 2 != 0))
+            || ((this->board[0][0] % 2 == 0) && (this->board[1][1] % 2 == 0) && (this->board[2][2] % 2 == 0)))
+        || (this->board[0][2] + this->board[1][1] + this->board[2][0] >= 15) &&
+        (((this->board[0][2] % 2 != 0) && (this->board[1][1] % 2 != 0) && (this->board[2][0] % 2 != 0))
+            || ((this->board[0][2] % 2 == 0) && (this->board[1][1] % 2 == 0) && (this->board[2][0] % 2 == 0)))) {
         return true;
     }
     return false;
 }
-
-bool NumericalTicTacToeBoard::is_draw() {
-    return n_moves == 9 && !is_win();
+template <typename T>
+bool NumericalTicTacToeBoard<T>::is_draw() {
+    return this->n_moves == 9 && !is_win();
 }
-
-bool NumericalTicTacToeBoard:: game_is_over() {
+template<typename T>
+ bool NumericalTicTacToeBoard<T>::Is_empty(int x, int y)
+{
+    if (this->board[x][y] == 0)
+        return true;
+    return false;
+}
+template <typename T>
+bool NumericalTicTacToeBoard<T>:: game_is_over() {
     return is_win() || is_draw();
 }
-
-NumericalTicTacToePlayer::NumericalTicTacToePlayer(string n, int symbol, bool odd) : Player<int>(n, symbol) {
+template <typename T>
+NumericalTicTacToePlayer<T>::NumericalTicTacToePlayer(string n, int symbol, bool odd) : Player<int>(n, symbol) {
     for (int i = (odd ? 1 : 2); i <= 9; i += 2) {
-        available_numbers.insert(i);
+        this->available_numbers.insert(i);
     }
 }
-
-void NumericalTicTacToePlayer::getmove(int& x, int& y) {
+template <typename T>
+void NumericalTicTacToePlayer<T>::getmove(int& x, int& y) {
 
     int number;
-    cout << this->name;
-    cout << "'s available numbers:( " << *available_numbers.begin();
-    for (int i : available_numbers) {
-        if (i == *available_numbers.begin()) { continue; }
-        cout << " ," << i;
+    cout <<"player " << this->name << " your available nambers are ";
+    cout << "( ";
+    for (int i : this->available_numbers) {
+        cout << i << " ";
     }
-    cout << " )\n";
+    cout << ")\n";
     cout << "enter your move(number x y): ";
-    cin >> number >> x >> y;
-    if (available_numbers.count(number)) {
-        available_numbers.erase(number);
-        symbol = number;
+   
+    while (true) {
+        cin >>number>> x >> y;
+
+        // Check if input is valid
+        if (cin.fail()) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Please enter a valid integer.\n";
+            cout << ")\n";
+            cout << "enter your move(number x y): ";
+        }
+        else {
+            break; // Exit the loop if input is valid
+        }
+    }
+    
+    if (this->available_numbers.count(number)) {
+        this->available_numbers.erase(number);
+        this->symbol = number;
     }
     else {
         cout << "Invalid number. Try again.\n";
         getmove(x, y);
     }
 }
-
-RandomNumericalTicTacToePlayer::RandomNumericalTicTacToePlayer(string n, int symbol, bool odd)
-    : NumericalTicTacToePlayer(n, symbol, odd) {
+template <typename T>
+RandomNumericalTicTacToePlayer<T>::RandomNumericalTicTacToePlayer(int symbol, bool odd)
+    : RandomPlayer<int>(symbol) {
+    for (int i = (odd ? 1 : 2); i <= 9; i += 2) {
+        this->available_numbers.insert(i);
+    }
     srand(static_cast<unsigned int>(time(0)));
 }
-
-void RandomNumericalTicTacToePlayer::getmove(int& x, int& y)  {
+template <typename T>
+void RandomNumericalTicTacToePlayer<T>::getmove(int& x, int& y)  {
     int number;
-    vector<int> available_numbers_vec(available_numbers.begin(), available_numbers.end());
-
-    int random_index = rand() % available_numbers_vec.size();
-    number = available_numbers_vec[random_index];
-    available_numbers.erase(number);
-    symbol = number;
-
+    vector<int> available_numbers_vec(this->available_numbers.begin(), this->available_numbers.end());
+    
     x = rand() % 3;
     y = rand() % 3;
+    
+    int random_index = rand() % available_numbers_vec.size();
+    number = available_numbers_vec[random_index];
+    this->symbol = number;
+
 
 }
 
 #endif
+
 
