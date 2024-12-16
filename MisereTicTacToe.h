@@ -37,6 +37,7 @@ private:
     int n_moves;
     Player<T>* players[2];
     int current_player;
+    bool GameOver = false;
 };
 
 template <typename T>
@@ -57,9 +58,9 @@ MisereTicTacToe_Player<T>& MisereTicTacToe_Player<T>::operator=(const MisereTicT
 }
 
 template <typename T>
-class MisereTicTacToe_Random_Player : public Player<T> {
+class MisereTicTacToe_Random_Player : public RandomPlayer<T> {
 public:
-    MisereTicTacToe_Random_Player(T symbol) : Player<T>("Computer", symbol) { srand(static_cast<unsigned int>(time(0))); }
+    MisereTicTacToe_Random_Player(T symbol) : RandomPlayer<T>( symbol) { srand(static_cast<unsigned int>(time(0))); }
     void getmove(int& x, int& y) override;
 
 };
@@ -79,6 +80,8 @@ MisereTicTacToe_Board<T>::MisereTicTacToe_Board() {
 
 template <typename T>
 bool MisereTicTacToe_Board<T>::update_board(int x, int y, T symbol) {
+    if (GameOver)
+        return true;
     if (x >= 0 && x < 3 && y >= 0 && y < 3 && this->board[x][y] == 0) {
         this->board[x][y] = toupper(symbol);
         this->n_moves++;
@@ -89,15 +92,19 @@ bool MisereTicTacToe_Board<T>::update_board(int x, int y, T symbol) {
 
 template <typename T>
 void MisereTicTacToe_Board<T>::display_board() {
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            cout << " " << (this->board[i][j] == 0 ? " " : string(1, this->board[i][j])) << " ";
-            if (j < 2) cout << "|";
+    if (!GameOver)
+    {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                cout << " " << (this->board[i][j] == 0 ? " " : string(1, this->board[i][j])) << " ";
+                if (j < 2) cout << "|";
+            }
+            cout << endl;
+            if (i < 2) cout << "---+---+---\n";
         }
         cout << endl;
-        if (i < 2) cout << "---+---+---\n";
-    }
-    cout << endl;
+   }
+    
 }
 
 
@@ -187,36 +194,36 @@ void MisereTicTacToe_Board<T>::swap_player_names() {
 
 template <typename T>
 bool MisereTicTacToe_Board<T>::is_win() {
-    int x = x_count();
-    int o = o_count();
+    if (!GameOver)
+    {
+        int x = x_count();
+        int o = o_count();
 
-    if (x > o) {
-        cout << player2_name << " wins!\n";
-        exit(0);
-    }
-    else if (o > x) {
-        cout << player1_name << " wins!\n";
-        exit(0);
-    }
+        if (x > o) {
+            cout << player2_name << " wins!\n";
+            GameOver = true;
+            return false;// to prevent the game manager from print the player name
+        }
+        else if (o > x) {
+            cout << player1_name << " wins!\n";
+            GameOver = true;
+            return false;
+        }
 
+   }
+    
     return false;
 }
 
 
 template <typename T>
 bool MisereTicTacToe_Board<T>::is_draw() {
-    return (this->n_moves == 9 && !is_win());
+    return (this->n_moves == 9 && !GameOver);// i replaced is_win() with GameOver
 }
 
 template <typename T>
-bool MisereTicTacToe_Board<T>::game_is_over() {
-    if (is_win()) {
-        return true;
-    }
-    if (is_draw()) {
-        return true;
-    }
-    return false;
+bool MisereTicTacToe_Board<T>::game_is_over() { // i replaced is_win() with GameOver
+    return  is_draw() || GameOver;
 }
 
 template <typename T>
