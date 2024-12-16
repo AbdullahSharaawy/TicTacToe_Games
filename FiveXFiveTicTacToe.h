@@ -8,11 +8,10 @@
 #include "BoardGame_Classes.h"
 #include <limits>
 using namespace std;
-extern string player1_name;
-extern string player2_name;
+extern string playerName_X;
 
 int x, o;
-bool player_x = false;
+
 template <typename T>
 class FiveXFiveTicTacToe_Board : public Board<T> {
 public:
@@ -32,6 +31,7 @@ public:
     int o_count();
 
 private:
+    bool player_x = false;
     T board[5][5];
     int n_moves;
     Player<T>* players[2];
@@ -44,15 +44,25 @@ public:
     FiveXFiveTicTacToe_Player(string name, T symbol) : Player<T>(name, symbol) {}
 
     void getmove(int& x, int& y) override;
+
+   FiveXFiveTicTacToe_Player<T>& operator=(const FiveXFiveTicTacToe_Player<T>& other);
 };
 
-
+template <typename T>
+FiveXFiveTicTacToe_Player<T>& FiveXFiveTicTacToe_Player<T>::operator=(const FiveXFiveTicTacToe_Player<T>& other) {
+    if (this != &other) {  // Avoid self-assignment
+        this->name = other.name;
+        this->symbol = other.symbol;
+    }
+    return *this;
+}
 template <typename T>
 class FiveXFiveTicTacToe_Random_Player : public RandomPlayer<T> {
 public:
-    FiveXFiveTicTacToe_Random_Player(T symbol) : RandomPlayer<T>(symbol) {
+    FiveXFiveTicTacToe_Random_Player(T symbol) : RandomPlayer<T>( symbol) {
         srand(static_cast<unsigned int>(time(0)));
     }
+
 
     void getmove(int& x, int& y) override;
 
@@ -219,17 +229,22 @@ template <typename T>
 bool FiveXFiveTicTacToe_Board<T>::is_win() {
     x = x_count();
     o = o_count();
-    
+    // in this condition function will return false to ignore display name of player O as a winner , where i print name player x with out pointer of players that exist in game manager
     if (x > o) {
+
+        if (player_x)
+            return false;
+       
         cout << "score player x= " << x << endl
             << "score player o= " << o << endl;
-        cout << player1_name << " wins\n";
-        exit(0);
+        cout << playerName_X<<" wins" << endl;
+        player_x = true;
+        return false;
     }
     else if (o > x) {
         cout << "score player x= " << x << endl
             << "score player o= " << o << endl;
-
+        
         return true;
     }
     else {
@@ -239,9 +254,9 @@ bool FiveXFiveTicTacToe_Board<T>::is_win() {
 
 template <typename T>
 bool FiveXFiveTicTacToe_Board<T>::is_draw() {
-    if (player_x)
+if (player_x)
         return false;
-    else if (this->n_moves == 24 && !is_win()) {
+else if (this->n_moves == 24 && !is_win()) {
         cout << "score player x= " << x << endl
             << "score player o= " << o << endl;
     }
