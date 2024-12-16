@@ -7,7 +7,7 @@
 #include"FourXFourTicTacToe.h"
 #include"MisereTicTacToe.h"
 #include "NumericalTicTacToe.h"
-#include"Ultimate.h"
+#include"TicTacToe_of_Ultimate.h"
 #include <string>
 #include"TicTacToe_5x5.h"
 #include<iomanip>
@@ -142,6 +142,8 @@ Board<T>* Controller<T>::createBoard(int SelectedBoard)
         return new FiveXFiveTicTacToe_Board<T>();
     case 6:
         return new MisereTicTacToe_Board<T>();
+    case 8:
+        return new tictactoe_ultimateBoard<T>();
    
     default:
         return nullptr;
@@ -170,7 +172,8 @@ RandomPlayer<T>* Controller<T>::createComputerPlayer(int GameNumber, char Player
        
     case 6:
         return new MisereTicTacToe_Random_Player<T>(PlayerSymbol);
- 
+    case 8:
+        return new tictactoe_ultimateRandom_Player<T>(PlayerSymbol);
     default:
 
         break;
@@ -195,7 +198,8 @@ Player<T>* Controller<T>::createHumanPlayer(int GameNumber, string PlayerName, c
         return new FourXFourTicTacToe_Player<T>(PlayerName, PlayerSymbol);
     case 6:
         return new MisereTicTacToe_Player<T>(PlayerName, PlayerSymbol);
-    
+    case 8:
+        return new tictactoe_ultimatePlayer<T>(PlayerName, PlayerSymbol);
     default:
         break;
     }
@@ -352,12 +356,6 @@ void Controller<T>::Start()
             selectNameAndType(selectGameName(GameNumber), i == 0 ? '1' : '2', players[i], GameNumber);
         }
     }
-    else if (GameNumber==8)
-    {
-        Ultimategame ultimate_game;
-        ultimate_game.Run_gaMe();
-        
-    }
     else if (GameNumber==5)
     {
         Controller::startNumerical();
@@ -378,7 +376,7 @@ void Controller<T>::Start()
 
     }
 
-    if (GameNumber != 5 && GameNumber != 8)
+    if (GameNumber != 5 )
     {
         for (size_t i = 0; i < 2; i++)
         {
