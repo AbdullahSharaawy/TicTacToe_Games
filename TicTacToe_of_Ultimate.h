@@ -102,19 +102,27 @@ inline void tictactoe_ultimateBoard<T>::draw_O(){
 // Display the board and the pieces on it
 template <typename T>
 void tictactoe_ultimateBoard<T>::display_board() {
+    cout << "\n====================================================================================";
     for (int i = 0; i < this->rows; i++) {
-        cout << "\n| ";
-        for (int j = 0; j < this->columns; j++) {
-            cout << "(" << i << "," << j << ")";
-            cout << setw(2);
-            (this->board[i][j] == 0) ? cout << " " : cout << this->board[i][j];
-            cout << "|";
-        }
-        cout << "\n--------------------------------------------------------------------------";
+        cout << "\n||| ";
+        
+            for (int j = 0; j < this->rows; j++) {
+                cout << "(" << i << "," << j << ")";
+                cout << setw(2);
+                (this->board[i][j] == 0) ? cout << " " : cout << this->board[i][j];
+                cout << "|";
+                if (j == 5 || j == 2 || j == 8)
+                    cout << "|| ";
+                
+            }
+            if (i == 5 || i == 2 || i == 8) {
+                cout << "\n====================================================================================";
+                continue;
+            }
+        cout << "\n------------------------------------------------------------------------------------";
     }
     cout << endl;
 }
-
 int where_are_we(int x) {// to get the correct position in the big board
     if (x < 3)
         return 0;
