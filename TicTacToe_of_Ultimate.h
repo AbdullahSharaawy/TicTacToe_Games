@@ -1,48 +1,59 @@
-#pragma once
+#ifndef _TICTACTOE_ULTIMATE_H
+#define _TICTACTOE_ULTIMATE_H
+
 #include "BoardGame_Classes.h"
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
+
+int where_are_we(int x);
+
+template <typename T>
+class tictactoe_ultimateBoard:public Board<T> {
+    char track_BigBoard[3][3];
+public:
+    tictactoe_ultimateBoard ();
+    bool update_board (int x , int y , T symbol);
+    void draw_X();
+    void draw_O();
+    void display_board ();
+    void is_win_small();
+    bool is_win() ;
+    bool is_draw();
+    bool game_is_over();
+    
+    
+};
+
+template <typename T>
+class tictactoe_ultimatePlayer : public Player<T> {
+public:
+    tictactoe_ultimatePlayer (string name, T symbol);
+    void getmove(int& x, int& y) ;
+
+};
+
+template <typename T>
+class tictactoe_ultimateRandom_Player : public RandomPlayer<T>{
+public:
+    tictactoe_ultimateRandom_Player (T symbol);
+    void getmove(int &x, int &y) ;
+};
+
+
+
+
+
+//--------------------------------------- IMPLEMENTATION
+
 #include <iostream>
 #include <iomanip>
 #include <cctype>  
+
 using namespace std;
 
-class TicTacToeBoard : public Board<char> {
-    char winer_Symbol;
-public:
-    
-    TicTacToeBoard();
-    void clear_Board();
-    bool update_board(int x, int y, char symbol);
-    void display_board();
-    bool is_win();
-    char get_winer_Symbol();
-    bool is_draw();
-    bool game_is_over();
-    char get_cell(int x, int y);
-
-};
-
-class TicTacToePlayer : public Player<char> {
-public:
-    TicTacToePlayer(string name, char symbol);
-    void getmove(int& x, int& y);
-
-};
-
-
-class TicTacToeRandom_Player : public RandomPlayer<char> {
-public:
-    TicTacToeRandom_Player(char symbol);
-    void getmove(int& x, int& y);
-};
-
-//======================================================
-
-TicTacToeBoard::TicTacToeBoard() {
-    this->rows = this->columns = 3;
-    this->board = new char* [this->rows];
+// Constructor for tictactoe_ultimateBoard
+template <typename T>
+tictactoe_ultimateBoard<T>::tictactoe_ultimateBoard() {
+    this->rows = this->columns = 9;
+    this->board = new char*[this->rows];
     for (int i = 0; i < this->rows; i++) {
         this->board[i] = new char[this->columns];
         for (int j = 0; j < this->columns; j++) {
@@ -50,30 +61,27 @@ TicTacToeBoard::TicTacToeBoard() {
         }
     }
     this->n_moves = 0;
-}
-
-void TicTacToeBoard::clear_Board(){
-    for (int i = 0; i < this->rows; i++)
-        for (int j = 0; j < this->columns; j++) {
-            this->board[i][j] = 0;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            track_BigBoard[i][j] = 0;
         }
-    n_moves = 0;
+    }
 }
 
-
-
-
-
-bool TicTacToeBoard::update_board(int a, int b, char mark) {
-
-    if (!(a < 0 || a >= this->rows || b < 0 || b >= this->columns) && (this->board[a][b] == 0 || mark == 0)) {
-        if (mark == 0) {
+template <typename T>
+bool tictactoe_ultimateBoard<T>::update_board(int x, int y, T mark) {
+    // Only update if move is valid
+    if (!(x < 0 || x >= this->rows || y < 0 || y >= this->columns) && (this->board[x][y] == 0|| mark == 0)) {
+        if (mark == 0){
             this->n_moves--;
-            this->board[a][b] = 0;
+            this->board[x][y] = 0;
         }
         else {
+            //for clarity
+            cout << "\nposition chosen is: " << x << " " << y;
+            cout << "\nfilled with mark: " << mark << endl;
             this->n_moves++;
-            this->board[a][b] = toupper(mark);
+            this->board[x][y] = toupper(mark);
         }
 
         return true;
@@ -81,73 +89,106 @@ bool TicTacToeBoard::update_board(int a, int b, char mark) {
     return false;
 }
 
-void TicTacToeBoard::display_board() {
+template<typename T>
+inline void tictactoe_ultimateBoard<T>::draw_X(){
+
+}
+
+template<typename T>
+inline void tictactoe_ultimateBoard<T>::draw_O(){
+
+}
+
+// Display the board and the pieces on it
+template <typename T>
+void tictactoe_ultimateBoard<T>::display_board() {
     for (int i = 0; i < this->rows; i++) {
         cout << "\n| ";
         for (int j = 0; j < this->columns; j++) {
             cout << "(" << i << "," << j << ")";
-            cout << setw(2) << this->board[i][j] << " |";
+            cout << setw(2);
+            (this->board[i][j] == 0) ? cout << " " : cout << this->board[i][j];
+            cout << "|";
         }
-        cout << "\n-----------------------------";
+        cout << "\n--------------------------------------------------------------------------";
     }
     cout << endl;
 }
 
-bool TicTacToeBoard::is_win() {
-    
-    for (int i = 0; i < this->rows; i++) {
-        if ((this->board[i][0] == this->board[i][1] && this->board[i][1] == this->board[i][2] && this->board[i][0] != 0) ||
-            (this->board[0][i] == this->board[1][i] && this->board[1][i] == this->board[2][i] && this->board[0][i] != 0)) {
-            if (board[i][0] || board[0][i] == 'X') {
-                winer_Symbol = 'X';
-                return true;
+int where_are_we(int x) {// to get the correct position in the big board
+    if (x < 3)
+        return 0;
+    else if (x < 6)
+        return 1;
+    else if (x < 9)
+        return 2;
+}
+
+template<typename T>
+void tictactoe_ultimateBoard<T>::is_win_small(){
+    //finds out with board is win and assigns a corret mark
+    for (int i = 0; i < this->rows; i+=3) {// for the rows
+        for (int c = 0; c < this->rows; c+=3) {// for the columns
+            if ((this->board[c][i] == this->board[c][i + 1] && this->board[c][i + 1] == this->board[c][i + 2] && this->board[c][i] != 0) ||
+                (this->board[i][c] == this->board[i + 1][c] && this->board[i + 1][c] == this->board[i + 2][c] && this->board[i][c] != 0)) {
+                track_BigBoard[where_are_we(i)][where_are_we(c)] = ((this->board[c][i] == this->board[c][i + 1] && this->board[c][i + 1] == this->board[c][i + 2]))
+                                        ? this->board[c][i]
+                                        : this->board[i][c];
             }
-            else {
-                winer_Symbol = 'O';
-                return true;
+            if ((this->board[i][c] == this->board[i + 1][c + 1] && this->board[i + 1][c + 1] == this->board[i + 2][c + 2] && this->board[i][c] != 0) ||
+                 (this->board[i][c + 2] == this->board[i + 1][c + 1] && this->board[i + 1][c + 1] == this->board[i + 2][c] && this->board[i][c + 2] != 0)) {
+                 track_BigBoard[where_are_we(i)][where_are_we(c)] = ((this->board[i][c] == this->board[i + 1][c + 1] && this->board[i + 1][c + 1] == this->board[i + 2][c + 2] && this->board[i][c] != 0))
+                                        ? this->board[i][c]
+                                        : this->board[i][c + 2];
             }
-            
+        }
+    }
+}
+
+// Returns true if there is any winner
+template <typename T>
+bool tictactoe_ultimateBoard<T>::is_win() {
+    //run is_win_small first to track the game
+    is_win_small();
+    // Check rows and columns
+    for (int i = 0; i < 3; i++) {
+        if ((track_BigBoard[i][0] == track_BigBoard[i][1] && track_BigBoard[i][1] == track_BigBoard[i][2] && track_BigBoard[i][0] != 0) ||
+            (track_BigBoard[0][i] == track_BigBoard[1][i] && track_BigBoard[1][i] == track_BigBoard[2][i] && track_BigBoard[0][i] != 0)) {
+            return true;
         }
     }
 
-    if ((this->board[0][0] == this->board[1][1] && this->board[1][1] == this->board[2][2] && this->board[0][0] != 0) ||
-        (this->board[0][2] == this->board[1][1] && this->board[1][1] == this->board[2][0] && this->board[0][2] != 0)) {
-        if (board[0][0] || board[0][2] == 'X') {
-            winer_Symbol = 'X';
-            return true;
-        }
-        else {
-            winer_Symbol = 'O';
-            return true;
-        }
+    // Check diagonals
+    if ((track_BigBoard[0][0] == track_BigBoard[1][1] && track_BigBoard[1][1] == track_BigBoard[2][2] && track_BigBoard[0][0] != 0) ||
+        (track_BigBoard[0][2] == track_BigBoard[1][1] && track_BigBoard[1][1] == track_BigBoard[2][0] && track_BigBoard[0][2] != 0)) {
+        return true;
     }
 
     return false;
 }
 
-char TicTacToeBoard::get_winer_Symbol() {
-    return winer_Symbol;
+// Return true if 81 moves are done and no winner
+template <typename T>
+bool tictactoe_ultimateBoard<T>::is_draw() {
+    return (this->n_moves == 81 && !is_win());
 }
 
-bool TicTacToeBoard::is_draw() {
-    return (this->n_moves == 9 && !is_win());
-}
-
-
-bool TicTacToeBoard::game_is_over() {
+template <typename T>
+bool tictactoe_ultimateBoard<T>::game_is_over() {
     return is_win() || is_draw();
 }
 
-char TicTacToeBoard::get_cell(int x, int y) {
-    return board[x][y];
-}
+//--------------------------------------
 
-TicTacToePlayer::TicTacToePlayer(string name, char symbol) : Player<char>(name, symbol) {}
+// Constructor for tictactoe_ultimatePlayer
+template <typename T>
+tictactoe_ultimatePlayer<T>::tictactoe_ultimatePlayer(string name, T symbol) : Player<T>(name, symbol) {}
 
-void TicTacToePlayer::getmove(int& a, int& b) {
-    cout << "\nPlease enter your move x and y (0 to 2) separated by spaces: ";
+template <typename T>
+void tictactoe_ultimatePlayer<T>::getmove(int& x, int& y) {
+    cout << "\nPlease enter your move x and y (0 to 8) separated by spaces: ";
     while (true) {
-        cin >> a >> b;
+        cin >> x >> y;
 
         // Check if input is valid
         if (cin.fail()) {
@@ -159,19 +200,28 @@ void TicTacToePlayer::getmove(int& a, int& b) {
             break; // Exit the loop if input is valid
         }
     }
-    
+
 }
 
-TicTacToeRandom_Player::TicTacToeRandom_Player(char symbol) : RandomPlayer<char>(symbol) {
-    this->dimension = 3;
+// Constructor for tictactoe_ultimateRandom_Player
+template <typename T>
+tictactoe_ultimateRandom_Player<T>::tictactoe_ultimateRandom_Player(T symbol) : RandomPlayer<T>(symbol) {
+    this->dimension = 9;
     this->name = "Random Computer Player";
-    srand(static_cast<unsigned int>(time(0)));  
+    srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
 }
 
-void TicTacToeRandom_Player::getmove(int& a, int& b ) {
-    a = rand() % this->dimension;  
-    b = rand() % this->dimension;
+template <typename T>
+void tictactoe_ultimateRandom_Player<T>::getmove(int& x, int& y) {
+    x = rand() % this->dimension;  // Random number between 0 and 8
+    y = rand() % this->dimension;
 }
 
 
+
+
+
+
+
+#endif //_tictactoe_ultimate_O_H
 
